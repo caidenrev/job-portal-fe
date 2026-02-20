@@ -1,1 +1,1 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+export const API_URL = typeof window !== "undefined" ? "" : "http://3.27.249.181:8000";
