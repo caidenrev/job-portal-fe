@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { API_URL } from "@/lib/api-config"
 import { Button } from "@/components/ui/button"
 import {
     Card,

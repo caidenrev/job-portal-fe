@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import NextLink from "next/link"
+import { API_URL } from "@/lib/api-config"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -60,7 +61,7 @@ export default function JobsPage() {
         const fetchJobsAndProfile = async () => {
             try {
                 // Fetch Jobs
-                const resJobs = await fetch('http://localhost:8000/api/jobs')
+                const resJobs = await fetch(`${API_URL}/api/jobs`)
                 if (!resJobs.ok) throw new Error('Failed to fetch jobs')
                 const dataJobs = await resJobs.json()
                 setJobs(dataJobs)
@@ -68,7 +69,7 @@ export default function JobsPage() {
                 // Fetch Profile if Logged In
                 const token = localStorage.getItem('token')
                 if (token) {
-                    const resProfile = await fetch('http://localhost:8000/api/users/profile', {
+                    const resProfile = await fetch(`${API_URL}/api/users/profile`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     })
                     if (resProfile.ok) {
@@ -121,7 +122,7 @@ export default function JobsPage() {
                 return
             }
 
-            const res = await fetch('http://localhost:8000/api/apply', {
+            const res = await fetch(`${API_URL}/api/apply`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -163,7 +164,7 @@ export default function JobsPage() {
         setLoginError("")
 
         try {
-            const res = await fetch('http://localhost:8000/api/auth/login', {
+            const res = await fetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: loginEmail, password: loginPassword })

@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { API_URL } from "@/lib/api-config"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -35,7 +36,7 @@ export default function LandingPage() {
     const fetchRecentJobs = async () => {
       try {
         // Fetch lowongan terbaru dari public API
-        const res = await fetch('http://localhost:8000/api/jobs')
+        const res = await fetch(`${API_URL}/api/jobs`)
         if (res.ok) {
           const data = await res.json()
           // Tampilkan hanya 3 lowongan terbaru

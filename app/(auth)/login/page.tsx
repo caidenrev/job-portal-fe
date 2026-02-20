@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { API_URL } from "@/lib/api-config"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -27,7 +28,7 @@ export default function LoginPage() {
         setError("")
 
         try {
-            const res = await fetch("http://localhost:8000/api/auth/login", {
+            const res = await fetch(`${API_URL}/api/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -75,11 +76,11 @@ export default function LoginPage() {
                 <form onSubmit={handleLogin} className="space-y-4">
                     <div className="space-y-2 text-left">
                         <Label htmlFor="email">Email</Label>
-                        <Input 
-                            id="email" 
-                            type="email" 
-                            placeholder="nama@email.com" 
-                            required 
+                        <Input
+                            id="email"
+                            type="email"
+                            placeholder="nama@email.com"
+                            required
                             className="bg-background/50 focus:bg-background"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -92,10 +93,10 @@ export default function LoginPage() {
                                 Lupa password?
                             </Link>
                         </div>
-                        <Input 
-                            id="password" 
-                            type="password" 
-                            required 
+                        <Input
+                            id="password"
+                            type="password"
+                            required
                             className="bg-background/50 focus:bg-background"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}

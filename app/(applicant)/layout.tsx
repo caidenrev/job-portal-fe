@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { API_URL } from "@/lib/api-config"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -34,7 +35,7 @@ export default function ApplicantLayout({
         // Fetch data profil singkat untuk ditampilkan di Navbar
         const fetchProfile = async () => {
             try {
-                const res = await fetch("http://localhost:8000/api/users/profile", {
+                const res = await fetch(`${API_URL}/api/users/profile`, {
                     headers: {
                         "Authorization": `Bearer ${token}`
                     }
