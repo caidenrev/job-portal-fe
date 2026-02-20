@@ -1,0 +1,64 @@
+=========================================================
+RENCANA PEMBANGUNAN APLIKASI: JOBPORTAL (BLUE-WHITE THEME)
+=========================================================
+
+1. DESKRIPSI PROYEK
+-------------------
+Sebuah platform portal lowongan kerja modern dengan arsitektur terpisah 
+(Decoupled Architecture). Memiliki fitur manajemen role antara Pelamar 
+dan HR (Pemberi Kerja).
+
+2. TECH STACK (ARCHITECTURAL OVERVIEW)
+--------------------------------------
+- Frontend: Next.js (App Router), Tailwind CSS v4, Shadcn UI (Vercel Hosting).
+- Backend: REST API (Laravel/Node.js) di Amazon EC2 (AWS).
+- Database: MySQL/PostgreSQL di Amazon RDS (AWS).
+- Storage: Amazon S3 (AWS) untuk penyimpanan PDF CV dan Logo Perusahaan.
+
+3. STRUKTUR DATA (DATABASE SCHEMA)
+----------------------------------
+- users: id, name, email, password, role (applicant/hr), phone.
+- companies: id, user_id (HR), name, logo_url (S3), description, location.
+- jobs: id, company_id, title, description, requirements, type, status.
+- applications: id, job_id, applicant_id, cv_url (S3), status (stepper logic).
+
+4. FITUR UTAMA (CORE FEATURES)
+------------------------------
+A. Role Pelamar (Applicant):
+   - Landing Page dengan Hero Section biru-putih & grid pattern background.
+   - Registrasi & Login dengan pemilihan role.
+   - Eksplorasi Lowongan Kerja (Search & Filter).
+   - Apply Lowongan (Upload PDF CV ke Amazon S3 via Backend).
+   - CV Tracker: Visual Stepper untuk memantau status lamaran (Pending -> Reviewed -> Interview -> Accepted/Rejected).
+
+B. Role HR (Pemberi Kerja):
+   - Dashboard Admin (HR Portal) dengan Sidebar responsif.
+   - Manajemen Lowongan: Create, Read, Update, Delete (CRUD) lowongan.
+   - Manajemen Kandidat: Review CV dari S3 dan Update status progress lamaran.
+
+5. STRUKTUR FOLDER FRONTEND (NEXT.JS)
+-------------------------------------
+app/
+├── (auth)/          -> Login & Register (Card & Radio Group)
+├── (applicant)/     -> Navbar Pelamar, Cari Lowongan, CV Tracker
+└── (hr)/            -> Sidebar HR Portal, Dashboard, Post Job, Candidates Table
+
+6. PROGRESS SAAT INI (STATUS: ONGOING)
+--------------------------------------
+[DONE] Inisialisasi Next.js & Shadcn UI (Tailwind v4 OK).
+[DONE] Konfigurasi Global CSS (OKLCH Blue-White Theme OK).
+[DONE] Setup Route Groups & Folder Structure.
+[DONE] UI Landing Page (Grid Pattern OK).
+[DONE] UI Auth (Login & Register OK).
+[DONE] UI Applicant (Jobs & CV Tracker OK).
+[DONE] Layout HR Dashboard (Sidebar OK).
+
+7. NEXT STEPS (YANG PERLU DIKERJAKAN)
+-------------------------------------
+1. UI Form Pasang Lowongan (Post Job) di sisi HR.
+2. UI Tabel Kelola Kandidat (Candidates Table) di sisi HR.
+3. Setup Backend di AWS (EC2 & RDS).
+4. Integrasi Upload File CV ke Amazon S3.
+5. Integrasi API Frontend ke Backend.
+
+=========================================================

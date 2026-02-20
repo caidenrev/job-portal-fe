@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 LokerIn - Solusi Karir Masa Depan
 
-## Getting Started
+LokerIn adalah platform rekrutmen modern yang menghubungkan talenta berbakat dengan perusahaan impian secara efisien, aman, dan transparan. Dibangun dengan fokus pada pengalaman pengguna (UX) yang premium dan keamanan data menggunakan infrastruktur cloud terkemuka.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 👤 Executive Leadership
+**CEO & Founder:**  
+**Revan** - *Software & Cloud Engineer*
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Frontend (User Interface)
+- **Framework:** Next.js 15 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS 4 & Vanilla CSS
+- **Components:** Shadcn UI & Radix UI
+- **Icons:** Lucide React
+- **Typography:** Google Sans
+- **Animations:** Tailwind Animate & CSS Micro-animations
 
-## Learn More
+### Backend (Core Engine)
+- **Runtime:** Node.js
+- **Framework:** Express.js
+- **DB ORM:** Prisma
+- **Auth:** JSON Web Token (JWT) & Bcrypt hashing
+- **File Handling:** Multer & Multer-S3
 
-To learn more about Next.js, take a look at the following resources:
+### Infrastructure & Cloud
+- **Database:** AWS RDS (PostgreSQL)
+- **File Storage:** AWS S3 Cloud Storage
+- **Security:** S3 Bucket Policy & IAM Roles
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🏗️ Architecture & App Flow
 
-## Deploy on Vercel
+### System Architecture
+LokerIn menggunakan arsitektur **Decoupled Frontend-Backend** untuk memastikan skalabilitas dan performa maksimal.
+- **Client Side:** Menghandle rendering UI, state management auth di localStorage, dan interaksi dinamis.
+- **Server Side:** Bertanggung jawab atas logika bisnis, validasi keamanan, hashing password, dan integrasi pihak ketiga (AWS).
+- **Persistence Layer:** Data relasional disimpan di AWS RDS, sementara aset fisik (PDF/Gambar) disimpan secara terpisah di AWS S3.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Application Flow
+1. **Public/Guest Exploration:**
+   - Pengunjung dapat mengeksplorasi Landing Page yang modern.
+   - Pengunjung dapat melihat daftar lowongan pekerjaan secara publik di `/jobs`.
+   - Pengunjung dapat mencoba melamar; jika belum login, sistem akan menampilkan **Inline Login Modal** (Pop-up) untuk transisi yang mulus.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **Applicant Journey:**
+   - **Profile Completion:** Pelamar mengisi biodata (Bio, Skill, Pengalaman) dan mengunggah CV permanen sekali saja.
+   - **1-Click Apply:** Dengan fitur "Auto-Apply", pelamar hanya perlu satu klik untuk melamar ke banyak pekerjaan tanpa perlu unggah ulang file.
+   - **Application Tracking:** Melacak status lamaran (Pending, Interview, Accepted, Rejected) secara real-time.
+
+3. **HR Management Performance:**
+   - **Job Posting:** Membuat dan mempublikasikan lowongan pekerjaan baru.
+   - **Candidate Management:** Dashboard khusus untuk melihat semua pelamar, mengunduh CV langsung dari S3, dan mengubah tahapan rekrutmen.
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v18+)
+- PostgreSQL (or AWS RDS access)
+- AWS Account (S3 access)
+
+### Installation
+1. Clone the repository
+2. Install dependencies for both Frontend & Backend:
+   ```bash
+   # Root (Frontend)
+   npm install
+   # Server
+   cd server && npm install
+   ```
+3. Configure environment variables (`.env`) in both directories.
+4. Run development server:
+   ```bash
+   # Frontend
+   npm run dev
+   # Backend
+   cd server && npm run dev
+   ```
+
+---
+© 2026 LokerIn. Developed by **Revan**.
