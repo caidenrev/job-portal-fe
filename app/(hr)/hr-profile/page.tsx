@@ -16,10 +16,11 @@ export default function HRProfilePage() {
     const [saving, setSaving] = useState(false)
     const [message, setMessage] = useState({ type: "", text: "" })
 
-    // User State
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [phone, setPhone] = useState("")
+    const [profileImageUrl, setProfileImageUrl] = useState("")
+    const [avatarFile, setAvatarFile] = useState<File | null>(null)
 
     // Company State
     const [companyName, setCompanyName] = useState("")
@@ -44,10 +45,10 @@ export default function HRProfilePage() {
                 if (res.ok) {
                     const data = await res.json()
 
-                    // Populate User Data
                     setName(data.name || "")
                     setEmail(data.email || "")
                     setPhone(data.phone || "")
+                    setProfileImageUrl(data.profileImageUrl || "")
 
                     // Populate Company Data if HR
                     if (data.company) {
@@ -71,22 +72,24 @@ export default function HRProfilePage() {
         e.preventDefault()
         setSaving(true)
         setMessage({ type: "", text: "" })
-
         try {
+            const formData = new FormData()
+            formData.append("name", name)
+            formData.append("phone", phone)
+            formData.append("companyName", companyName)
+            formData.append("companyLocation", companyLocation)
+            formData.append("companyDescription", companyDescription)
+            if (avatarFile) {
+                formData.append("avatar", avatarFile)
+            }
+
             const token = localStorage.getItem("token")
             const res = await fetch(`${API_URL}/api/users/profile`, {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify({
-                    name,
-                    phone,
-                    companyName,
-                    companyLocation,
-                    companyDescription
-                })
+                body: formData
             })
 
             const data = await res.json()
@@ -94,6 +97,11 @@ export default function HRProfilePage() {
             if (!res.ok) {
                 throw new Error(data.message || "Gagal menyimpan profil")
             }
+
+            setProfileImageUrl(data.user.profileImageUrl)
+            setAvatarFile(null)
+            const avatarInput = document.getElementById("avatar") as HTMLInputElement;
+            if (avatarInput) avatarInput.value = "";
 
             setMessage({ type: "success", text: "Profil berhasil diperbarui!" })
 
@@ -133,6 +141,38 @@ export default function HRProfilePage() {
             )}
 
             <form onSubmit={handleSave} className="space-y-6">
+                {/* Avatar Section */}
+                <Card className="border-border/50 bg-background/50 backdrop-blur-sm shadow-sm overflow-hidden">
+                    <CardContent className="p-6">
+                        <div className="flex flex-col sm:flex-row items-center gap-6">
+                            <div className="shrink-0 relative group">
+                                {profileImageUrl || avatarFile ? (
+                                    <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-primary/20 shadow-sm relative">
+                                        <img src={avatarFile ? URL.createObjectURL(avatarFile) : profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
+                                    </div>
+                                ) : (
+                                    <div className="w-24 h-24 rounded-full bg-primary/5 border border-primary/20 flex items-center justify-center text-primary/40">
+                                        <UserCircle className="w-16 h-16" />
+                                    </div>
+                                )}
+                            </div>
+                            <div className="flex-1 space-y-2 text-center sm:text-left">
+                                <Label htmlFor="avatar" className="text-primary font-bold text-lg">Foto Profil HR / Logo</Label>
+                                <Input
+                                    id="avatar"
+                                    type="file"
+                                    accept="image/png, image/jpeg, image/jpg"
+                                    onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
+                                    className="bg-background cursor-pointer max-w-sm"
+                                />
+                                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                                    Format JPG atau PNG maksimal 2MB. Gambar ini akan merepresentasikan Anda saat berkomunikasi dengan Pelamar.
+                                </p>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
                 <div className="grid md:grid-cols-2 gap-6">
                     {/* Data Personal HR */}
                     <Card className="border-border/50 bg-background/50 backdrop-blur-sm shadow-sm">

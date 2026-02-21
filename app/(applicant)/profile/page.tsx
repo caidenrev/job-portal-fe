@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { CheckCircle2 } from "lucide-react"
+import { CheckCircle2, UserCircle } from "lucide-react"
 
 export default function ProfilePage() {
     const router = useRouter()
@@ -30,6 +30,10 @@ export default function ProfilePage() {
     // Resume State
     const [savedCvUrl, setSavedCvUrl] = useState("")
     const [cvFile, setCvFile] = useState<File | null>(null)
+
+    // Avatar State
+    const [profileImageUrl, setProfileImageUrl] = useState("")
+    const [avatarFile, setAvatarFile] = useState<File | null>(null)
 
     // Password Form State
     const [currentPassword, setCurrentPassword] = useState("")
@@ -66,6 +70,7 @@ export default function ProfilePage() {
                 setExperience(data.experience || "")
                 setSkills(data.skills || "")
                 setSavedCvUrl(data.savedCvUrl || "")
+                setProfileImageUrl(data.profileImageUrl || "")
 
             } catch (err: any) {
                 console.error(err)
@@ -97,6 +102,9 @@ export default function ProfilePage() {
             if (cvFile) {
                 formData.append("cv", cvFile)
             }
+            if (avatarFile) {
+                formData.append("avatar", avatarFile)
+            }
 
             // Sertakan password jika bermain-main mengubahnya
             if (newPassword) {
@@ -124,15 +132,19 @@ export default function ProfilePage() {
 
             setSuccess("Profil berhasil diperbarui!")
             setSavedCvUrl(data.user.savedCvUrl)
+            setProfileImageUrl(data.user.profileImageUrl)
 
             // Kosongkan field kata sandi & file setelah sukses
             setCurrentPassword("")
             setNewPassword("")
             setCvFile(null)
+            setAvatarFile(null)
 
             // Reset input file (optional trick to clear the UI)
-            const fileInput = document.getElementById("cv") as HTMLInputElement;
-            if (fileInput) fileInput.value = "";
+            const cvInput = document.getElementById("cv") as HTMLInputElement;
+            if (cvInput) cvInput.value = "";
+            const avatarInput = document.getElementById("avatar") as HTMLInputElement;
+            if (avatarInput) avatarInput.value = "";
 
         } catch (err: any) {
             setError(err.message)
@@ -165,6 +177,30 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleUpdateProfile} className="space-y-6">
+                        {/* Avatar Section */}
+                        <div className="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-border/50">
+                            <div className="shrink-0">
+                                {profileImageUrl || avatarFile ? (
+                                    <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-primary/20">
+                                        <img src={avatarFile ? URL.createObjectURL(avatarFile) : profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
+                                    </div>
+                                ) : (
+                                    <UserCircle className="w-24 h-24 text-muted-foreground opacity-50" />
+                                )}
+                            </div>
+                            <div className="flex-1 space-y-2 text-center sm:text-left">
+                                <Label htmlFor="avatar" className="text-primary font-bold">Foto Profil (Opsional)</Label>
+                                <Input
+                                    id="avatar"
+                                    type="file"
+                                    accept="image/png, image/jpeg, image/jpg"
+                                    onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
+                                    className="bg-background cursor-pointer max-w-sm"
+                                />
+                                <p className="text-xs text-muted-foreground mt-1">Gunakan foto bernuansa profesional untuk meningkatkan daya tarik lamaran Anda. File maksimum 2MB (JPG/PNG).</p>
+                            </div>
+                        </div>
+
                         {/* Section Informasi Dasar */}
                         <div className="grid gap-4 sm:grid-cols-2">
                             <div className="space-y-2">

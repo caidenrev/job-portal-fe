@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import NextLink from "next/link"
 import { API_URL } from "@/lib/api-config"
 import { Button } from "@/components/ui/button"
@@ -37,6 +38,7 @@ interface Job {
 }
 
 export default function JobsPage() {
+    const router = useRouter()
     const [jobs, setJobs] = useState<Job[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -227,17 +229,19 @@ export default function JobsPage() {
             {!loading && jobs.length > 0 && (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {jobs.map((job) => (
-                        <Card key={job.id} className="flex flex-col justify-between hover:shadow-lg transition-shadow border-border/50">
+                        <Card key={job.id} onClick={() => router.push(`/jobs/${job.id}`)} className="flex flex-col justify-between hover:shadow-lg transition-all border-border/50 cursor-pointer hover:border-primary/40 group">
                             <CardHeader>
                                 <div className="flex justify-between items-start">
                                     <div className="space-y-1">
-                                        <CardTitle className="text-xl text-primary">{job.title}</CardTitle>
+                                        <CardTitle className="text-xl text-primary transition-colors group-hover:text-blue-700">
+                                            {job.title}
+                                        </CardTitle>
                                         <CardDescription className="font-medium text-foreground">
                                             {job.company?.name || "Perusahaan Anonim"}
                                         </CardDescription>
                                     </div>
-                                    <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground font-semibold">
-                                        {job.type}
+                                    <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground font-semibold capitalize">
+                                        {job.type.replace('_', ' ').toLowerCase()}
                                     </Badge>
                                 </div>
                             </CardHeader>
@@ -253,8 +257,11 @@ export default function JobsPage() {
                             </CardContent>
                             <CardFooter>
                                 <Button
-                                    className="w-full font-semibold shadow-sm"
-                                    onClick={() => setSelectedJob(job)}
+                                    className="w-full font-semibold shadow-sm z-10 relative"
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        setSelectedJob(job)
+                                    }}
                                 >
                                     Lamar Sekarang
                                 </Button>

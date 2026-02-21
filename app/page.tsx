@@ -149,8 +149,8 @@ export default function LandingPage() {
                           {job.company?.name || "Perusahaan Anonim"}
                         </CardDescription>
                       </div>
-                      <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground font-semibold">
-                        {job.type}
+                      <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground font-semibold capitalize">
+                        {job.type.replace('_', ' ').toLowerCase()}
                       </Badge>
                     </div>
                   </CardHeader>

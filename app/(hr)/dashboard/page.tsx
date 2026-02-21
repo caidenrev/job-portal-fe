@@ -154,7 +154,7 @@ export default function HRDashboard() {
                                         </CardHeader>
                                         <CardContent>
                                             <div className="flex justify-between items-center bg-background/50 p-3 rounded-lg border border-border/30 mb-4">
-                                                <span className="text-foreground font-semibold px-2">{job.type.replace('_', ' ')}</span>
+                                                <span className="text-foreground font-semibold px-2 capitalize">{job.type.replace('_', ' ').toLowerCase()}</span>
                                                 <div className="flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full font-bold text-sm">
                                                     <Users className="w-4 h-4" />
                                                     {job._count?.applications || 0} Pelamar

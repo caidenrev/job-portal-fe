@@ -118,7 +118,7 @@ export default function CandidatesPage() {
                 </Button>
             </div>
 
-            <div className="rounded-xl border border-border/50 bg-background/50 backdrop-blur-sm shadow-sm overflow-hidden min-h-[400px]">
+            <div className="rounded-xl border border-border/50 bg-background/50 backdrop-blur-sm shadow-sm overflow-x-auto min-h-[400px]">
                 {loading && candidates.length === 0 ? (
                     <div className="flex items-center justify-center h-full min-h-[400px]">
                         <p className="text-muted-foreground animate-pulse">Memuat data kandidat...</p>

@@ -27,6 +27,7 @@ export default function HRLayout({
     const router = useRouter()
     const [companyName, setCompanyName] = useState("Memuat...")
     const [companyInitials, setCompanyInitials] = useState("HR")
+    const [hrAvatar, setHrAvatar] = useState("")
 
     useEffect(() => {
         const fetchHRProfile = async () => {
@@ -42,6 +43,12 @@ export default function HRLayout({
 
                 if (res.ok) {
                     const data = await res.json()
+
+                    if (data.profileImageUrl) {
+                        setHrAvatar(data.profileImageUrl)
+                    } else {
+                        setHrAvatar("")
+                    }
 
                     if (data.company && data.company.name) {
                         const name = data.company.name
@@ -167,9 +174,13 @@ export default function HRLayout({
                                 <span className="font-bold text-foreground truncate max-w-[200px]">{companyName}</span>
                                 <span className="text-xs text-muted-foreground">Mode: HR Admin</span>
                             </div>
-                            <div className="h-9 w-9 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center text-primary font-bold">
-                                {companyInitials}
-                            </div>
+                            {hrAvatar ? (
+                                <img src={hrAvatar} alt="HR" className="h-9 w-9 rounded-full object-cover border-2 border-primary shadow-sm" />
+                            ) : (
+                                <div className="h-9 w-9 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center text-primary font-bold">
+                                    {companyInitials}
+                                </div>
+                            )}
                         </div>
                     </header>
 
