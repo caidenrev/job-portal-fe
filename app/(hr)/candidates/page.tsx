@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { API_URL } from "@/lib/api-config"
 import {
     Table,
     TableBody,
@@ -14,54 +15,75 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { FileDown, RefreshCw, Mail, Users } from "lucide-react"
 
-// Dummy data
-const MOCK_CANDIDATES = [
-    {
-        id: 1,
-        name: "Eka Pramudia",
-        email: "eka@example.com",
-        jobTitle: "Frontend Developer",
-        appliedDate: "12 Okt 2024",
-        status: "PENDING",
-        cvUrl: "#"
-    },
-    {
-        id: 2,
-        name: "Budi Santoso",
-        email: "budi@example.com",
-        jobTitle: "Backend Developer",
-        appliedDate: "11 Okt 2024",
-        status: "REVIEWED",
-        cvUrl: "#"
-    },
-    {
-        id: 3,
-        name: "Siti Rahma",
-        email: "siti@example.com",
-        jobTitle: "UI/UX Designer",
-        appliedDate: "10 Okt 2024",
-        status: "INTERVIEW",
-        cvUrl: "#"
+interface Candidate {
+    id: number
+    cvUrl: string
+    status: string
+    createdAt: string
+    applicant: {
+        name: string
+        email: string
+        phone: string | null
     }
-]
+    job: {
+        title: string
+    }
+}
 
 export default function CandidatesPage() {
-    const [candidates, setCandidates] = useState(MOCK_CANDIDATES)
+    const [candidates, setCandidates] = useState<Candidate[]>([])
+    const [loading, setLoading] = useState(true)
 
-    const handleStatusChange = (id: number, newStatus: string) => {
+    const fetchCandidates = async () => {
+        setLoading(true)
+        try {
+            const token = localStorage.getItem("token")
+            const res = await fetch(`${API_URL}/api/applications`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+            if (res.ok) {
+                const data = await res.json()
+                setCandidates(data)
+            }
+        } catch (error) {
+            console.error("Failed to fetch candidates:", error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchCandidates()
+    }, [])
+
+    const handleStatusChange = async (id: number, newStatus: string) => {
+        // Optimistic UI Update
+        const previousCandidates = [...candidates]
         setCandidates(candidates.map(c =>
             c.id === id ? { ...c, status: newStatus } : c
         ))
-    }
 
-    const getStatusBadgeVariant = (status: string) => {
-        switch (status) {
-            case "PENDING": return "secondary"
-            case "REVIEWED": return "default"
-            case "INTERVIEW": return "default" // we will override bg in classname
-            case "ACCEPTED": return "default" // override bg
-            case "REJECTED": return "destructive"
-            default: return "secondary"
+        try {
+            const token = localStorage.getItem("token")
+            const res = await fetch(`${API_URL}/api/applications/${id}/status`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+
+            if (!res.ok) {
+                throw new Error("Gagal update status")
+            }
+        } catch (error) {
+            console.error("Error updating status:", error)
+            alert("Gagal memperbarui status kandidat.")
+            // Rollback
+            setCandidates(previousCandidates)
         }
     }
 
@@ -90,67 +112,81 @@ export default function CandidatesPage() {
                         Tinjau pelamar dan perbarui status proses rekrutmen.
                     </p>
                 </div>
-                <Button variant="outline" className="gap-2 border-primary/20 hover:bg-primary/10 transition-colors">
-                    <RefreshCw className="w-4 h-4" /> Segarkan Data
+                <Button onClick={fetchCandidates} disabled={loading} variant="outline" className="gap-2 border-primary/20 hover:bg-primary/10 transition-colors">
+                    <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                    {loading ? "Menyegarkan..." : "Segarkan Data"}
                 </Button>
             </div>
 
-            <div className="rounded-xl border border-border/50 bg-background/50 backdrop-blur-sm shadow-sm overflow-hidden">
-                <Table>
-                    <TableCaption className="pb-4">Menampilkan daftar pelamar terbaru.</TableCaption>
-                    <TableHeader className="bg-muted/50">
-                        <TableRow>
-                            <TableHead className="font-semibold text-foreground">Nama Pelamar</TableHead>
-                            <TableHead className="font-semibold text-foreground">Posisi (Job)</TableHead>
-                            <TableHead className="font-semibold text-foreground">Tanggal Apply</TableHead>
-                            <TableHead className="font-semibold text-foreground text-center">Status</TableHead>
-                            <TableHead className="font-semibold text-foreground text-right">Aksi</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {candidates.map((candidate) => (
-                            <TableRow key={candidate.id} className="hover:bg-muted/30 transition-colors">
-                                <TableCell className="font-medium">
-                                    <div className="flex flex-col">
-                                        <span>{candidate.name}</span>
-                                        <span className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                                            <Mail className="w-3 h-3" /> {candidate.email}
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell>{candidate.jobTitle}</TableCell>
-                                <TableCell className="text-muted-foreground">{candidate.appliedDate}</TableCell>
-                                <TableCell className="text-center">
-                                    <Badge variant="outline" className={`font-semibold border-0 ${getStatusColorClass(candidate.status)}`}>
-                                        {candidate.status}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <div className="flex items-center justify-end gap-2 text-xs">
-                                        <Button variant="ghost" size="sm" asChild className="hover:text-primary hover:bg-primary/10">
-                                            <a href={candidate.cvUrl} target="_blank" rel="noopener noreferrer">
-                                                <FileDown className="w-4 h-4 mr-1" /> CV
-                                            </a>
-                                        </Button>
-
-                                        {/* Dropdown HTML biasa untuk cepat ganti status */}
-                                        <select
-                                            value={candidate.status}
-                                            onChange={(e) => handleStatusChange(candidate.id, e.target.value)}
-                                            className="h-8 rounded-md border border-input bg-background px-2 py-1 text-xs ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
-                                        >
-                                            <option value="PENDING">Set Pending</option>
-                                            <option value="REVIEWED">Set Reviewed</option>
-                                            <option value="INTERVIEW">Set Interview</option>
-                                            <option value="ACCEPTED">Set Accepted</option>
-                                            <option value="REJECTED">Set Rejected</option>
-                                        </select>
-                                    </div>
-                                </TableCell>
+            <div className="rounded-xl border border-border/50 bg-background/50 backdrop-blur-sm shadow-sm overflow-hidden min-h-[400px]">
+                {loading && candidates.length === 0 ? (
+                    <div className="flex items-center justify-center h-full min-h-[400px]">
+                        <p className="text-muted-foreground animate-pulse">Memuat data kandidat...</p>
+                    </div>
+                ) : (
+                    <Table>
+                        <TableCaption className="pb-4">Menampilkan daftar pelamar terbaru.</TableCaption>
+                        <TableHeader className="bg-muted/50">
+                            <TableRow>
+                                <TableHead className="font-semibold text-foreground">Nama Pelamar</TableHead>
+                                <TableHead className="font-semibold text-foreground">Posisi (Job)</TableHead>
+                                <TableHead className="font-semibold text-foreground">Tanggal Apply</TableHead>
+                                <TableHead className="font-semibold text-foreground text-center">Status</TableHead>
+                                <TableHead className="font-semibold text-foreground text-right">Aksi</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {candidates.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="text-center h-32 text-muted-foreground font-medium">
+                                        Belum ada kandidat sejauh ini.
+                                    </TableCell>
+                                </TableRow>
+                            ) : candidates.map((candidate) => (
+                                <TableRow key={candidate.id} className="hover:bg-muted/30 transition-colors">
+                                    <TableCell className="font-medium">
+                                        <div className="flex flex-col">
+                                            <span>{candidate.applicant.name}</span>
+                                            <span className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                                                <Mail className="w-3 h-3" /> {candidate.applicant.email}
+                                            </span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>{candidate.job.title}</TableCell>
+                                    <TableCell className="text-muted-foreground">
+                                        {new Date(candidate.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        <Badge variant="outline" className={`font-semibold border-0 ${getStatusColorClass(candidate.status)}`}>
+                                            {candidate.status}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <div className="flex items-center justify-end gap-2 text-xs">
+                                            <Button variant="ghost" size="sm" asChild className="hover:text-primary hover:bg-primary/10">
+                                                <a href={candidate.cvUrl} target="_blank" rel="noopener noreferrer">
+                                                    <FileDown className="w-4 h-4 mr-1" /> CV
+                                                </a>
+                                            </Button>
+
+                                            <select
+                                                value={candidate.status}
+                                                onChange={(e) => handleStatusChange(candidate.id, e.target.value)}
+                                                className="h-8 rounded-md border border-input bg-background px-2 py-1 text-xs ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer hover:border-primary/50 transition-colors"
+                                            >
+                                                <option value="PENDING">Set Pending</option>
+                                                <option value="REVIEWED">Set Reviewed</option>
+                                                <option value="INTERVIEW">Set Interview</option>
+                                                <option value="ACCEPTED">Set Accepted</option>
+                                                <option value="REJECTED">Set Rejected</option>
+                                            </select>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                )}
             </div>
         </div>
     )
