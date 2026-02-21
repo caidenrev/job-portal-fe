@@ -175,15 +175,15 @@ export default function TrackerPage() {
                                 <CardContent className="pt-10 pb-12 w-full overflow-hidden">
 
                                     {/* Visual Stepper Progress */}
-                                    <div className="relative flex justify-between w-full max-w-3xl mx-auto px-4 md:px-12">
+                                    <div className="relative flex justify-between w-full max-w-3xl mx-auto px-2 md:px-12">
                                         {/* Garis background penghubung */}
-                                        <div className="absolute top-6 left-8 right-8 md:left-16 md:right-16 h-1.5 bg-muted/70 -translate-y-1/2 z-0 rounded-full"></div>
+                                        <div className="absolute top-5 md:top-6 left-6 right-6 md:left-16 md:right-16 h-1 md:h-1.5 bg-muted/70 -translate-y-1/2 z-0 rounded-full"></div>
 
                                         {/* Garis progress solid */}
                                         <div
-                                            className="absolute top-6 left-8 md:left-16 h-1.5 -translate-y-1/2 z-0 rounded-full transition-all duration-700 ease-spring"
+                                            className="absolute top-5 md:top-6 left-6 md:left-16 h-1 md:h-1.5 -translate-y-1/2 z-0 rounded-full transition-all duration-700 ease-spring"
                                             style={{
-                                                width: isRejected ? 'calc(100% - 4rem)' : `calc(${(currentStepIndex / (STEPS.length - 1)) * 100}% - 4rem)`,
+                                                width: isRejected ? 'calc(100% - 3rem)' : `calc(${(currentStepIndex / (STEPS.length - 1)) * 100}% - 3rem)`,
                                                 backgroundColor: isRejected ? '#ef4444' : (activeStepData ? `var(--tw-colors-${activeStepData.twColor}-500, currentColor)` : 'currentColor'),
                                             }}
                                         >
@@ -209,30 +209,30 @@ export default function TrackerPage() {
                                             }
 
                                             // Ring Highlight Effect if Currently Focused
-                                            const ringEffect = isCurrentlyFocused ? `ring-4 ring-${step.twColor}-500/20 ring-offset-2 ring-offset-background scale-110` : 'scale-100';
+                                            const ringEffect = isCurrentlyFocused ? `ring-[3px] md:ring-4 ring-${step.twColor}-500/20 ring-offset-2 ring-offset-background scale-105 md:scale-110` : 'scale-90 md:scale-100';
 
                                             return (
                                                 <div key={step.id} className="relative z-10 flex flex-col items-center w-1/4">
 
                                                     {/* Kapsul/Icon Ikonator */}
-                                                    <div className={`w-12 h-12 rounded-2xl border-2 flex items-center justify-center transition-all duration-500 ease-out backdrop-blur-sm shadow-lg ${circleColor} ${ringEffect}`}>
-                                                        <Icon className={`w-6 h-6 ${isCurrentlyFocused ? 'animate-pulse' : ''}`} />
+                                                    <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl border-2 flex items-center justify-center transition-all duration-500 ease-out backdrop-blur-sm shadow-lg ${circleColor} ${ringEffect}`}>
+                                                        <Icon className={`w-4 h-4 md:w-6 md:h-6 ${isCurrentlyFocused ? 'animate-pulse' : ''}`} />
                                                     </div>
 
                                                     {/* Typography Title & Desc */}
-                                                    <div className="absolute top-16 w-32 md:w-48 text-center flex flex-col items-center">
-                                                        <span className={`text-sm tracking-tight font-bold mb-1 transition-colors ${isActive ? (isRejected ? 'text-red-600' : `text-${step.twColor}-600 dark:text-${step.twColor}-400`) : 'text-muted-foreground'}`}>
+                                                    <div className="absolute top-12 md:top-16 w-20 md:w-48 text-center flex flex-col items-center">
+                                                        <span className={`text-[10px] md:text-sm tracking-tight font-bold mb-0.5 md:mb-1 transition-colors ${isActive ? (isRejected ? 'text-red-600' : `text-${step.twColor}-600 dark:text-${step.twColor}-400`) : 'text-muted-foreground'}`}>
                                                             {isRejected && index === STEPS.length - 1 ? "Ditolak / Gagal" : step.label}
                                                         </span>
 
                                                         {/* Description appears only on active focused steps to avoid clutter, or on all past steps? We show on focused step only for elegance */}
                                                         {isCurrentlyFocused && (
-                                                            <p className="text-[11px] md:text-xs text-muted-foreground font-medium leading-relaxed animate-in fade-in slide-in-from-top-2 duration-500">
+                                                            <p className="hidden md:block text-[11px] md:text-xs text-muted-foreground font-medium leading-relaxed animate-in fade-in slide-in-from-top-2 duration-500">
                                                                 {step.desc}
                                                             </p>
                                                         )}
                                                         {isRejected && index === STEPS.length - 1 && (
-                                                            <p className="text-[11px] md:text-xs text-red-500/80 font-medium leading-relaxed animate-in fade-in slide-in-from-top-2 duration-500">
+                                                            <p className="hidden md:block text-[11px] md:text-xs text-red-500/80 font-medium leading-relaxed animate-in fade-in slide-in-from-top-2 duration-500">
                                                                 Maaf, profilmu belum memenuhi kualifikasi saat ini.
                                                             </p>
                                                         )}
@@ -242,7 +242,7 @@ export default function TrackerPage() {
                                         })}
                                     </div>
                                     {/* Spacer Extra for Absolute Descriptions */}
-                                    <div className="h-20"></div>
+                                    <div className="h-10 md:h-20"></div>
 
                                 </CardContent>
                             </Card>
