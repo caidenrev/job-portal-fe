@@ -20,13 +20,15 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
-import { Menu, User, LogOut, LayoutDashboard, Search, HelpCircle, Info, MessageCircle } from "lucide-react"
+import { Menu, User, LogOut, LayoutDashboard, Search, HelpCircle, Info, MessageCircle, Bell } from "lucide-react"
 
 export default function Navbar() {
     const router = useRouter()
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [userName, setUserName] = useState("")
     const [userRole, setUserRole] = useState("")
+    const [notifications, setNotifications] = useState<any[]>([])
+    const [unreadCount, setUnreadCount] = useState(0)
 
     useEffect(() => {
         const token = localStorage.getItem("token")
@@ -35,6 +37,23 @@ export default function Navbar() {
         if (token) {
             setIsLoggedIn(true)
             setUserRole(role || "")
+
+            // Fetch Notifications
+            const fetchNotifications = async () => {
+                try {
+                    const res = await fetch(`${API_URL}/api/notifications`, {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    })
+                    if (res.ok) {
+                        const data = await res.json()
+                        setNotifications(data)
+                        setUnreadCount(data.filter((n: any) => !n.isRead).length)
+                    }
+                } catch (error) {
+                    console.error("Gagal mengambil notifikasi", error)
+                }
+            }
+            fetchNotifications()
 
             // Fetch name for applicant specifically if needed, 
             // but for simplicity we can just display general info or fetch it.
@@ -58,6 +77,74 @@ export default function Navbar() {
             }
         }
     }, [])
+
+    const handleMarkAsRead = async (id: number) => {
+        try {
+            const token = localStorage.getItem("token")
+            await fetch(`${API_URL}/api/notifications/${id}/read`, {
+                method: 'PATCH',
+                headers: { "Authorization": `Bearer ${token}` }
+            })
+            setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n))
+            setUnreadCount(prev => Math.max(0, prev - 1))
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const handleMarkAllAsRead = async () => {
+        try {
+            const token = localStorage.getItem("token")
+            await fetch(`${API_URL}/api/notifications/read-all`, {
+                method: 'PATCH',
+                headers: { "Authorization": `Bearer ${token}` }
+            })
+            setNotifications(prev => prev.map(n => ({ ...n, isRead: true })))
+            setUnreadCount(0)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const renderNotificationDropdown = () => (
+        <DropdownMenuContent align="end" className="w-80">
+            <div className="flex items-center justify-between px-4 py-3 border-b">
+                <span className="font-semibold">Notifikasi</span>
+                {unreadCount > 0 && (
+                    <button onClick={handleMarkAllAsRead} className="text-xs text-primary hover:underline">
+                        Tandai semua dibaca
+                    </button>
+                )}
+            </div>
+            <div className="max-h-[350px] overflow-y-auto">
+                {notifications.length === 0 ? (
+                    <div className="p-8 text-center text-sm text-muted-foreground flex flex-col items-center gap-2">
+                        <Bell className="w-8 h-8 opacity-20" />
+                        Belum ada notifikasi
+                    </div>
+                ) : (
+                    notifications.map((notif: any) => (
+                        <div
+                            key={notif.id}
+                            onClick={() => !notif.isRead && handleMarkAsRead(notif.id)}
+                            className={`p-4 border-b last:border-0 transition-colors hover:bg-muted/50 ${!notif.isRead ? 'bg-primary/5 cursor-pointer' : 'opacity-80'}`}
+                        >
+                            <div className="flex justify-between items-start gap-2 mb-1">
+                                <p className={`text-sm ${!notif.isRead ? 'font-bold text-foreground' : 'font-medium text-foreground/80'}`}>{notif.title}</p>
+                                {!notif.isRead && <span className="w-2 h-2 rounded-full bg-blue-500 mt-1 shrink-0"></span>}
+                            </div>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{notif.message}</p>
+                            <p className="text-[10px] text-muted-foreground mt-2 font-medium">
+                                {new Date(notif.createdAt).toLocaleDateString('id-ID', {
+                                    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                                })}
+                            </p>
+                        </div>
+                    ))
+                )}
+            </div>
+        </DropdownMenuContent>
+    )
 
     const handleLogout = () => {
         localStorage.removeItem("token")
@@ -104,10 +191,26 @@ export default function Navbar() {
                             </Button>
                         </>
                     ) : (
-                        <div className="flex items-center space-x-4">
-                            <div className="text-sm font-medium text-muted-foreground hidden xl:block">
+                        <div className="flex items-center space-x-2 xl:space-x-4">
+                            <div className="text-sm font-medium text-muted-foreground hidden xl:block mr-2">
                                 Halo, {userName || (userRole === "HR" ? "HR" : "Pelamar")}
                             </div>
+
+                            {/* Notification Bell Desktop */}
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="relative hover:bg-primary/10 rounded-full w-9 h-9">
+                                        <Bell className="w-5 h-5 text-foreground/80" />
+                                        {unreadCount > 0 && (
+                                            <span className="absolute top-1 right-1.5 flex h-2 w-2">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                                            </span>
+                                        )}
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                {renderNotificationDropdown()}
+                            </DropdownMenu>
 
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -143,7 +246,25 @@ export default function Navbar() {
                 </div>
 
                 {/* Mobile Side-Menu (Hamburger) */}
-                <div className="lg:hidden">
+                <div className="lg:hidden flex items-center gap-1 sm:gap-2">
+                    {/* Notification Bell Mobile (Samping Kiri Menu) */}
+                    {isLoggedIn && (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="relative h-10 w-10">
+                                    <Bell className="h-5 w-5 text-foreground/80" />
+                                    {unreadCount > 0 && (
+                                        <span className="absolute top-2 right-2.5 flex h-2 w-2">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                                        </span>
+                                    )}
+                                </Button>
+                            </DropdownMenuTrigger>
+                            {renderNotificationDropdown()}
+                        </DropdownMenu>
+                    )}
+
                     <Sheet>
                         <SheetTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-10 w-10">
