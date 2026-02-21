@@ -110,14 +110,18 @@ export default function CandidatesPage() {
             const token = localStorage.getItem("token")
             let hrId = 0
 
-            // Extract HR id from JWT token to initialize chat correctly
-            if (token) {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                hrId = JSON.parse(jsonPayload).id;
+            // Fetch HR id dari /api/users/profile agar lebih akurat
+            const hrProfileRes = await fetch(`${API_URL}/api/users/profile`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            })
+            if (hrProfileRes.ok) {
+                const hrData = await hrProfileRes.json()
+                hrId = hrData.id
+            }
+
+            if (!hrId) {
+                alert("Sesi HR Anda tidak valid. Silakan login kembali.");
+                return;
             }
 
             const res = await fetch(`${API_URL}/api/chat/init`, {
@@ -136,7 +140,8 @@ export default function CandidatesPage() {
             if (res.ok) {
                 router.push("/hr-messages")
             } else {
-                alert("Gagal menginisialisasi percakapan")
+                alert("Gagal menginisialisasi percakapan. Pastikan Server mendukung rute ini.")
+                console.error("Backend Error:", await res.text())
             }
         } catch (error) {
             console.error("Initiate chat error:", error)
