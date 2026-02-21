@@ -302,7 +302,7 @@ export default function JobDetailPage() {
                     {/* Persyaratan */}
                     <section className="bg-card/30 rounded-xl p-6 sm:p-8 border border-border/40 space-y-4">
                         <h2 className="text-2xl font-bold border-b border-border/50 pb-2 flex items-center gap-2">
-                            <Sparkles className="w-5 h-5 text-yellow-500" /> Kualifikasi & Persyaratan
+                            Kualifikasi & Persyaratan
                         </h2>
                         <div className="prose prose-sm sm:prose-base dark:prose-invert max-w-none text-muted-foreground whitespace-pre-wrap leading-relaxed list-disc marker:text-primary px-4">
                             {job.requirements}

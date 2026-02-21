@@ -22,6 +22,7 @@ interface JobApplication {
         }
     }
     createdAt: string
+    updatedAt: string
     status: string
 }
 
@@ -224,6 +225,11 @@ export default function TrackerPage() {
                                                         <span className={`text-[10px] md:text-sm tracking-tight font-bold mb-0.5 md:mb-1 transition-colors leading-tight ${isActive ? (isRejected ? 'text-red-600' : `text-${step.twColor}-600 dark:text-${step.twColor}-400`) : 'text-muted-foreground'}`}>
                                                             {isRejected && index === STEPS.length - 1 ? "Ditolak / Gagal" : step.label}
                                                         </span>
+                                                        {isActive && (index === 0 || index === currentStepIndex) && (
+                                                            <span className="text-[8.5px] md:text-[11px] text-muted-foreground mt-0.5 font-medium bg-background/50 px-1.5 py-0.5 rounded backdrop-blur-sm shadow-sm border border-border/50">
+                                                                {index === 0 ? formatDate(app.createdAt) : formatDate(app.updatedAt)}
+                                                            </span>
+                                                        )}
                                                     </div>
                                                 </div>
                                             )

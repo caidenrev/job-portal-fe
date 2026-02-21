@@ -71,10 +71,7 @@ export default function LandingPage() {
         {/* Hero Section */}
         <section className="w-full flex flex-col items-center justify-center text-center px-4 py-24 sm:py-32">
           <div className="space-y-8 max-w-4xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-semibold text-primary shadow-sm backdrop-blur-md">
-              <Sparkles className="w-4 h-4" /> Revolusi Pencarian Karir 2026
-            </div>
-            <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl text-foreground drop-shadow-sm leading-tight">
+            <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl text-foreground drop-shadow-sm leading-tight mt-6">
               Jelajahi <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">Peluang Emas</span> Untuk Masa Depanmu
             </h1>
             <p className="mx-auto max-w-[800px] text-lg text-muted-foreground sm:text-xl leading-relaxed">
@@ -123,7 +120,7 @@ export default function LandingPage() {
         <section className="w-full max-w-6xl px-4 py-20 border-t border-border/30">
           <div className="flex justify-between items-end mb-10">
             <div>
-              <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center gap-2">Lowongan Terbaru <Sparkles className="w-6 h-6 text-primary" /></h2>
+              <h2 className="text-3xl font-bold tracking-tight mb-2 flex items-center gap-2">Lowongan Terbaru</h2>
               <p className="text-muted-foreground">Jangan lewatkan kesempatan karir yang baru saja diunggah.</p>
             </div>
             <Button variant="ghost" asChild className="hidden sm:flex text-primary hover:text-primary hover:bg-primary/10">
