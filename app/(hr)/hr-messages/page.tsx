@@ -209,8 +209,8 @@ export default function HRMessagesPage() {
                                     </div>
                                     <div className="overflow-hidden">
                                         <CardTitle className="text-base md:text-lg truncate">{activeConversation.applicant.name}</CardTitle>
-                                        <p className="text-xs md:text-sm text-muted-foreground flex items-center gap-1.5 truncate">
-                                            Melamar: {activeConversation.job?.title || "Lowongan"}
+                                        <p className="text-xs md:text-sm text-muted-foreground flex items-center md:items-start gap-1.5 mt-1">
+                                            <Briefcase className="w-3.5 h-3.5 shrink-0 mt-0.5" /> <span className="line-clamp-2 text-wrap wrap-break-word leading-tight">Melamar: {activeConversation.job?.title || "Lowongan"}</span>
                                         </p>
                                     </div>
                                 </div>

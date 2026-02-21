@@ -208,8 +208,8 @@ export default function ApplicantMessagesPage() {
                                 </div>
                                 <div>
                                     <CardTitle className="text-base md:text-lg truncate">{activeConversation.job?.company?.name || "Perusahaan"}</CardTitle>
-                                    <p className="text-xs md:text-sm text-muted-foreground flex items-center gap-1.5 truncate">
-                                        <Briefcase className="w-3.5 h-3.5 shrink-0" /> <span className="truncate">Posisi: {activeConversation.job?.title || "Lowongan"} (HR: {activeConversation.hr.name})</span>
+                                    <p className="text-xs md:text-sm text-muted-foreground flex items-center md:items-start gap-1.5 mt-1">
+                                        <Briefcase className="w-3.5 h-3.5 shrink-0 mt-0.5" /> <span className="line-clamp-2 text-wrap wrap-break-word leading-tight">Posisi: {activeConversation.job?.title || "Lowongan"} (HR: {activeConversation.hr.name})</span>
                                     </p>
                                 </div>
                             </div>
