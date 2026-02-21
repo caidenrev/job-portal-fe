@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { API_URL } from "@/lib/api-config"
 import {
     Table,
@@ -20,13 +21,15 @@ import {
 } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { FileDown, RefreshCw, Mail, Users, Eye, Sparkles, Briefcase, BookOpen } from "lucide-react"
+import { FileDown, RefreshCw, Mail, Users, Eye, Sparkles, Briefcase, BookOpen, MessageCircle } from "lucide-react"
 
 interface Candidate {
     id: number
     cvUrl: string
     status: string
     createdAt: string
+    jobId: number
+    applicantId: number
     applicant: {
         name: string
         email: string
@@ -43,6 +46,7 @@ interface Candidate {
 }
 
 export default function CandidatesPage() {
+    const router = useRouter()
     const [candidates, setCandidates] = useState<Candidate[]>([])
     const [loading, setLoading] = useState(true)
     const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null)
@@ -98,6 +102,44 @@ export default function CandidatesPage() {
             alert("Gagal memperbarui status kandidat.")
             // Rollback
             setCandidates(previousCandidates)
+        }
+    }
+
+    const startChatWithApplicant = async (candidate: Candidate) => {
+        try {
+            const token = localStorage.getItem("token")
+            let hrId = 0
+
+            // Extract HR id from JWT token to initialize chat correctly
+            if (token) {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                hrId = JSON.parse(jsonPayload).id;
+            }
+
+            const res = await fetch(`${API_URL}/api/chat/init`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    jobId: candidate.jobId,
+                    hrId: hrId,
+                    applicantId: candidate.applicantId
+                })
+            })
+
+            if (res.ok) {
+                router.push("/messages")
+            } else {
+                alert("Gagal menginisialisasi percakapan")
+            }
+        } catch (error) {
+            console.error("Initiate chat error:", error)
         }
     }
 
@@ -210,12 +252,22 @@ export default function CandidatesPage() {
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-                            Detail Pelamar
-                        </DialogTitle>
-                        <DialogDescription>
-                            Profil lengkap untuk kandidat posisi {selectedCandidate?.job?.title}.
-                        </DialogDescription>
+                        <div className="flex justify-between items-start pt-2 px-1">
+                            <div>
+                                <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                                    Detail Pelamar
+                                </DialogTitle>
+                                <DialogDescription className="mt-1.5">
+                                    Profil lengkap untuk kandidat posisi {selectedCandidate?.job?.title}.
+                                </DialogDescription>
+                            </div>
+                            <Button
+                                onClick={() => startChatWithApplicant(selectedCandidate!)}
+                                className="gap-2 shadow-md shadow-primary/20"
+                            >
+                                <MessageCircle className="w-4 h-4" /> Mulai Chat
+                            </Button>
+                        </div>
                     </DialogHeader>
 
                     {selectedCandidate && (
