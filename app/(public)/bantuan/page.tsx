@@ -186,11 +186,11 @@ export default function BantuanPage() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <label htmlFor="name" className="text-sm font-semibold">Nama Lengkap</label>
-                                        <Input id="name" name="name" placeholder="Cth: Budi Santoso" required className="bg-background/80 h-12" />
+                                        <Input id="name" name="name" placeholder="Cth: Revan Caidenso" required className="bg-background/80 h-12" />
                                     </div>
                                     <div className="space-y-2">
                                         <label htmlFor="email" className="text-sm font-semibold">Alamat Email</label>
-                                        <Input id="email" name="email" type="email" placeholder="Cth: budi@contoh.com" required className="bg-background/80 h-12" />
+                                        <Input id="email" name="email" type="email" placeholder="Cth: Revan@contoh.com" required className="bg-background/80 h-12" />
                                     </div>
                                 </div>
 
