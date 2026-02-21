@@ -23,8 +23,15 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { Sparkles, MapPin, Briefcase, Lock, Mail, KeyRound, ArrowRightCircle } from "lucide-react"
+import { Sparkles, MapPin, Briefcase, Lock, Mail, KeyRound, ArrowRightCircle, Search, Filter } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 interface Job {
     id: number
@@ -40,7 +47,14 @@ interface Job {
 export default function JobsPage() {
     const router = useRouter()
     const [jobs, setJobs] = useState<Job[]>([])
+    const [filteredJobs, setFilteredJobs] = useState<Job[]>([])
     const [loading, setLoading] = useState(true)
+
+    // Filter States
+    const [searchQuery, setSearchQuery] = useState("")
+    const [filterType, setFilterType] = useState("ALL")
+    const [filterLocation, setFilterLocation] = useState("ALL")
+    const [sortOrder, setSortOrder] = useState("NEWEST")
 
     // Form Application State
     const [selectedJob, setSelectedJob] = useState<Job | null>(null)
@@ -67,6 +81,7 @@ export default function JobsPage() {
                 if (!resJobs.ok) throw new Error('Failed to fetch jobs')
                 const dataJobs = await resJobs.json()
                 setJobs(dataJobs)
+                setFilteredJobs(dataJobs)
 
                 // Fetch Profile if Logged In
                 const token = localStorage.getItem('token')
@@ -152,6 +167,38 @@ export default function JobsPage() {
         }
     }
 
+    useEffect(() => {
+        let result = [...jobs]
+
+        // 1. Text Search Filter (Title & Company)
+        if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase()
+            result = result.filter(job =>
+                job.title.toLowerCase().includes(query) ||
+                (job.company?.name || "").toLowerCase().includes(query)
+            )
+        }
+
+        // 2. Job Type Filter
+        if (filterType !== "ALL") {
+            result = result.filter(job => job.type === filterType)
+        }
+
+        // 3. Location Filter (Simple includes matching for city/provinces)
+        if (filterLocation !== "ALL") {
+            const locQuery = filterLocation.toLowerCase()
+            result = result.filter(job => (job.company?.location || "").toLowerCase().includes(locQuery))
+        }
+
+        // 4. Sorting Date
+        // (Assuming jobs from API are already Newest first by default, we just reverse if Oldest is selected)
+        if (sortOrder === "OLDEST") {
+            result = result.reverse() // Simple reversal for oldest first if API was newest. For robust date sorting use Date parsing.
+        }
+
+        setFilteredJobs(result)
+    }, [jobs, searchQuery, filterType, filterLocation, sortOrder])
+
     const resetModal = () => {
         setSelectedJob(null)
         setCvFile(null)
@@ -201,14 +248,74 @@ export default function JobsPage() {
     return (
         <div className="space-y-8">
             {/* Header & Search Bar */}
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between bg-primary/5 p-6 rounded-xl border border-primary/10">
-                <div className="space-y-1">
-                    <h1 className="text-3xl font-bold tracking-tight">Eksplor Lowongan</h1>
-                    <p className="text-muted-foreground">Temukan pekerjaan yang cocok dengan keahlianmu.</p>
+            <div className="flex flex-col gap-5 px-6 pt-6 pb-8 rounded-2xl border border-primary/10 bg-gradient-to-br from-primary/5 via-primary/[0.02] to-transparent shadow-sm">
+                <div className="space-y-2">
+                    <h1 className="text-3xl font-extrabold tracking-tight text-primary">Eksplor Lowongan</h1>
+                    <p className="text-muted-foreground font-medium text-lg">Temukan pekerjaan yang cocok dengan impian dan keahlianmu.</p>
                 </div>
-                <div className="flex w-full md:w-1/2 max-w-sm items-center space-x-2">
-                    <Input type="text" placeholder="Cari posisi, perusahaan..." className="bg-background" />
-                    <Button type="submit">Cari</Button>
+
+                <div className="flex flex-col md:flex-row gap-3 items-end mt-2">
+                    <div className="w-full md:flex-1 space-y-1.5 relative">
+                        <Label htmlFor="search" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">KATA KUNCI</Label>
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <Input
+                                id="search"
+                                type="text"
+                                placeholder="Cari posisi atau nama perusahaan..."
+                                className="pl-9 h-11 bg-background border-primary/20 focus-visible:ring-primary shadow-sm"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="w-full md:w-48 space-y-1.5">
+                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">TIPE PEKERJAAN</Label>
+                        <Select value={filterType} onValueChange={setFilterType}>
+                            <SelectTrigger className="h-11 bg-background border-primary/20 shadow-sm">
+                                <SelectValue placeholder="Pilih Tipe" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="ALL">Semua Tipe</SelectItem>
+                                <SelectItem value="FULL_TIME">Full Time</SelectItem>
+                                <SelectItem value="PART_TIME">Part Time</SelectItem>
+                                <SelectItem value="INTERNSHIP">Internship</SelectItem>
+                                <SelectItem value="CONTRACT">Contract</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="w-full md:w-48 space-y-1.5">
+                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">LOKASI</Label>
+                        <Select value={filterLocation} onValueChange={setFilterLocation}>
+                            <SelectTrigger className="h-11 bg-background border-primary/20 shadow-sm">
+                                <SelectValue placeholder="Pilih Lokasi" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="ALL">Seluruh Lokasi</SelectItem>
+                                <SelectItem value="Jakarta">Jakarta</SelectItem>
+                                <SelectItem value="Bandung">Bandung</SelectItem>
+                                <SelectItem value="Surabaya">Surabaya</SelectItem>
+                                <SelectItem value="Yogyakarta">Yogyakarta</SelectItem>
+                                <SelectItem value="Bali">Bali</SelectItem>
+                                <SelectItem value="Remote">Remote / WFH</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="w-full md:w-48 space-y-1.5">
+                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">URUTKAN</Label>
+                        <Select value={sortOrder} onValueChange={setSortOrder}>
+                            <SelectTrigger className="h-11 bg-background border-primary/20 shadow-sm">
+                                <SelectValue placeholder="Urutan Tanggal" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="NEWEST"> Paling Baru</SelectItem>
+                                <SelectItem value="OLDEST">Paling Lama</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
             </div>
 
@@ -219,16 +326,20 @@ export default function JobsPage() {
                 </div>
             )}
 
-            {!loading && jobs.length === 0 && (
-                <div className="text-center py-10">
-                    <p className="text-muted-foreground">Belum ada lowongan pekerjaan yang tersedia saat ini.</p>
+            {!loading && filteredJobs.length === 0 && (
+                <div className="text-center py-16 bg-muted/10 border border-dashed border-border rounded-xl">
+                    <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Filter className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-lg font-bold">Pencarian Tidak Ditemukan</h3>
+                    <p className="text-muted-foreground max-w-sm mx-auto mt-2">Coba ubah kata kunci pencarian atau bersihkan filter untuk melihat lebih banyak lowongan.</p>
                 </div>
             )}
 
             {/* Grid Lowongan Pekerjaan */}
-            {!loading && jobs.length > 0 && (
+            {!loading && filteredJobs.length > 0 && (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {jobs.map((job) => (
+                    {filteredJobs.map((job) => (
                         <Card key={job.id} onClick={() => router.push(`/jobs/${job.id}`)} className="flex flex-col justify-between hover:shadow-lg transition-all border-border/50 cursor-pointer hover:border-primary/40 group">
                             <CardHeader>
                                 <div className="flex justify-between items-start">
