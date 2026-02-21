@@ -22,6 +22,9 @@ export default function RegisterPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [role, setRole] = useState("APPLICANT")
+    const [companyName, setCompanyName] = useState("")
+    const [companyLocation, setCompanyLocation] = useState("")
+    const [companyDescription, setCompanyDescription] = useState("")
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
 
@@ -31,12 +34,19 @@ export default function RegisterPage() {
         setError("")
 
         try {
+            const bodyData: any = { name, email, password, role };
+            if (role === "HR") {
+                bodyData.companyName = companyName;
+                bodyData.companyLocation = companyLocation;
+                bodyData.companyDescription = companyDescription;
+            }
+
             const res = await fetch(`${API_URL}/api/auth/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ name, email, password, role }),
+                body: JSON.stringify(bodyData),
             })
 
             const data = await res.json()
@@ -111,7 +121,42 @@ export default function RegisterPage() {
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
-                    <div className="space-y-2">
+
+                    {role === "HR" && (
+                        <div className="space-y-4 p-4 mt-2 bg-primary/5 rounded-xl border border-primary/20">
+                            <h3 className="font-semibold text-primary">Informasi Perusahaan</h3>
+                            <div className="space-y-2">
+                                <Label htmlFor="companyName">Nama Perusahaan <span className="text-red-500">*</span></Label>
+                                <Input
+                                    id="companyName"
+                                    placeholder="PT Inovasi Teknologi"
+                                    required={role === "HR"}
+                                    value={companyName}
+                                    onChange={(e) => setCompanyName(e.target.value)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="companyLocation">Lokasi Pusat</Label>
+                                <Input
+                                    id="companyLocation"
+                                    placeholder="Jakarta Selatan, Indonesia"
+                                    value={companyLocation}
+                                    onChange={(e) => setCompanyLocation(e.target.value)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="companyDescription">Deskripsi Singkat</Label>
+                                <Input
+                                    id="companyDescription"
+                                    placeholder="Perusahaan teknologi yang berfokus pada..."
+                                    value={companyDescription}
+                                    onChange={(e) => setCompanyDescription(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="space-y-2 pt-2">
                         <Label htmlFor="password">Password</Label>
                         <Input
                             id="password"

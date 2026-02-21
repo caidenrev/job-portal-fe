@@ -1,4 +1,9 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { API_URL } from "@/lib/api-config"
 import {
     Sidebar,
     SidebarContent,
@@ -19,6 +24,57 @@ export default function HRLayout({
 }: {
     children: React.ReactNode
 }) {
+    const router = useRouter()
+    const [companyName, setCompanyName] = useState("Memuat...")
+    const [companyInitials, setCompanyInitials] = useState("HR")
+
+    useEffect(() => {
+        const fetchHRProfile = async () => {
+            try {
+                const token = localStorage.getItem("token")
+                if (!token) return
+
+                const res = await fetch(`${API_URL}/api/users/profile`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                })
+
+                if (res.ok) {
+                    const data = await res.json()
+
+                    if (data.company && data.company.name) {
+                        const name = data.company.name
+                        setCompanyName(name)
+                        // Create 2-letter initials
+                        const words = name.split(' ')
+                        let initials = ''
+                        if (words.length > 1) {
+                            initials = words[0][0] + words[1][0]
+                        } else if (words[0].length > 1) {
+                            initials = words[0].substring(0, 2)
+                        } else {
+                            initials = words[0]
+                        }
+                        setCompanyInitials(initials.toUpperCase())
+                    } else {
+                        setCompanyName("Profil Perusahaan Kosong")
+                    }
+                }
+            } catch (error) {
+                console.error("Gagal mengambil profil HR:", error)
+            }
+        }
+
+        fetchHRProfile()
+    }, [])
+
+    const handleLogout = () => {
+        localStorage.removeItem("token")
+        localStorage.removeItem("userRole")
+        router.push("/login")
+    }
+
     return (
         <SidebarProvider>
             <div className="flex min-h-screen w-full bg-muted/10">
@@ -76,11 +132,9 @@ export default function HRLayout({
                     <div className="mt-auto p-4 border-t border-border/50">
                         <SidebarMenu>
                             <SidebarMenuItem>
-                                <SidebarMenuButton asChild className="text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors">
-                                    <Link href="/login">
-                                        <LogOut className="w-5 h-5" />
-                                        <span className="font-medium text-base">Keluar Akun</span>
-                                    </Link>
+                                <SidebarMenuButton onClick={handleLogout} className="text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer">
+                                    <LogOut className="w-5 h-5" />
+                                    <span className="font-medium text-base">Keluar Akun</span>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                         </SidebarMenu>
@@ -91,15 +145,15 @@ export default function HRLayout({
                 <div className="flex flex-col flex-1 w-full relative overflow-hidden">
                     {/* Header Dashboard Atas */}
                     <header className="h-16 flex items-center border-b border-border/50 px-4 md:px-6 bg-background/95 backdrop-blur z-10 sticky top-0 shadow-sm">
-                        <SidebarTrigger className="text-primary hover:bg-primary/10 hover:text-primary transition-colors" />
+                        <SidebarTrigger className="text-primary hover:bg-primary/10 hover:text-primary transition-colors cursor-pointer" />
 
                         <div className="ml-auto flex items-center gap-4">
                             <div className="hidden md:flex flex-col items-end text-sm">
-                                <span className="font-bold text-foreground">Tech Nusantara</span>
+                                <span className="font-bold text-foreground truncate max-w-[200px]">{companyName}</span>
                                 <span className="text-xs text-muted-foreground">Mode: HR Admin</span>
                             </div>
                             <div className="h-9 w-9 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center text-primary font-bold">
-                                TN
+                                {companyInitials}
                             </div>
                         </div>
                     </header>
