@@ -52,7 +52,6 @@ export default function ApplicantMessagesPage() {
             }
         } catch (e) { }
 
-        // Fetch Conversations
         const fetchInbox = async () => {
             const res = await fetch(`${API_URL}/api/chat/inbox`, {
                 headers: { "Authorization": `Bearer ${token}` }
@@ -60,6 +59,14 @@ export default function ApplicantMessagesPage() {
             if (res.ok) {
                 const data = await res.json()
                 setConversations(data)
+
+                // Jika URL ada query params ?id=, buka percakapan tersebut otomatis
+                const urlParams = new URLSearchParams(window.location.search)
+                const convIdParam = urlParams.get('id')
+                if (convIdParam) {
+                    const matchedConv = data.find((c: Conversation) => c.id === parseInt(convIdParam))
+                    if (matchedConv) setActiveConversation(matchedConv)
+                }
             }
         }
         fetchInbox()
@@ -157,12 +164,12 @@ export default function ApplicantMessagesPage() {
                                         )}
                                     </div>
                                     <div className="overflow-hidden">
-                                        <h4 className="font-semibold truncate text-sm">{conv.hr.name} <span className="text-xs text-muted-foreground font-normal">({conv.job.company.name})</span></h4>
+                                        <h4 className="font-semibold truncate text-sm">{conv.hr.name} <span className="text-xs text-muted-foreground font-normal">({conv.job?.company?.name || "Perusahaan"})</span></h4>
                                         <p className="text-xs text-muted-foreground truncate italic flex items-center gap-1">
-                                            <Briefcase className="w-3 h-3" /> {conv.job.title}
+                                            <Briefcase className="w-3 h-3" /> {conv.job?.title || "Lowongan"}
                                         </p>
                                         <p className="text-sm truncate mt-1">
-                                            {conv.messages[0]?.content || "Mulai percakapan..."}
+                                            {conv.messages && conv.messages[0] ? conv.messages[0].content : "Mulai percakapan..."}
                                         </p>
                                     </div>
                                 </div>
@@ -188,7 +195,7 @@ export default function ApplicantMessagesPage() {
                                 <div>
                                     <CardTitle className="text-lg">{activeConversation.hr.name}</CardTitle>
                                     <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                                        <Briefcase className="w-3.5 h-3.5" /> Pelamar posisi: {activeConversation.job.title} di {activeConversation.job.company.name}
+                                        <Briefcase className="w-3.5 h-3.5" /> Pelamar posisi: {activeConversation.job?.title || "Lowongan"} di {activeConversation.job?.company?.name || "Perusahaan"}
                                     </p>
                                 </div>
                             </div>
