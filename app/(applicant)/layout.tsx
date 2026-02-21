@@ -61,12 +61,10 @@ export default function ApplicantLayout({
     return (
         <div className="min-h-screen flex flex-col bg-muted/20">
             {/* Navbar Khusus Pelamar */}
-            <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur-md">
-                <div className="container mx-auto flex h-16 items-center px-4 md:px-8">
+            <header className="flex h-16 items-center border-b border-border/40 px-4 md:px-8 bg-background/80 backdrop-blur-xl sticky top-0 z-50 transition-all shadow-md shadow-primary/10">
+                <div className="container flex w-full h-full items-center">
                     <Link href="/jobs" className="flex items-center gap-2 mr-8 hover:opacity-90">
-                        <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center shadow-sm shadow-primary/20">
-                        </div>
-                        <span className="font-bold text-xl tracking-tight hidden sm:inline-block text-primary">Loker<span className="text-blue-600">In</span></span>
+                        <span className="font-bold text-xl tracking-tight text-primary">Loker<span className="text-blue-600">In</span></span>
                     </Link>
 
                     <nav className="flex items-center space-x-6 text-sm font-medium">
