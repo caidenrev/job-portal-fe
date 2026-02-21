@@ -144,11 +144,11 @@ export default function HRMessagesPage() {
     }
 
     return (
-        <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 h-[80vh]">
+        <div className="max-w-[1200px] md:mx-auto grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-6 h-[calc(100vh-70px)] md:h-[80vh] bg-background -mx-4 -mt-4 md:mt-0">
 
             {/* Sidebar Inbox */}
-            <Card className={`md:col-span-1 flex-col h-full bg-background/50 backdrop-blur-sm ${activeConversation ? 'hidden md:flex' : 'flex'}`}>
-                <CardHeader className="border-b pb-4">
+            <Card className={`md:col-span-1 flex-col h-full bg-background/50 backdrop-blur-sm shadow-none md:shadow-sm border-0 md:border rounded-none md:rounded-xl ${activeConversation ? 'hidden md:flex' : 'flex'}`}>
+                <CardHeader className="border-b py-4 md:pb-4 px-4 md:px-6 shrink-0">
                     <CardTitle className="text-xl flex items-center gap-2">
                         <MessageCircle className="w-5 h-5 text-primary" /> Pesan Kandidat
                     </CardTitle>
@@ -191,7 +191,7 @@ export default function HRMessagesPage() {
             </Card>
 
             {/* Chat Area */}
-            <Card className={`md:col-span-2 flex-col h-full bg-background/50 backdrop-blur-sm ${activeConversation ? 'flex' : 'hidden md:flex'}`}>
+            <Card className={`md:col-span-2 flex-col h-full bg-background/50 backdrop-blur-sm shadow-none md:shadow-sm border-0 md:border rounded-none md:rounded-xl ${activeConversation ? 'flex' : 'hidden md:flex'}`}>
                 {activeConversation ? (
                     <>
                         <CardHeader className="border-b py-4 bg-muted/20 px-4 md:px-6">
