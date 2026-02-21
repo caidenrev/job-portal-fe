@@ -75,7 +75,8 @@ export default function ApplicantMessagesPage() {
         const socketUrl = API_URL || window.location.origin
         const newSocket = io(socketUrl, {
             path: '/socket.io',
-            transports: ['websocket', 'polling']
+            transports: ['polling', 'websocket'], // Biarkan polling jalan dulu baru upgrade
+            secure: true
         })
         setSocket(newSocket)
 
@@ -100,7 +101,13 @@ export default function ApplicantMessagesPage() {
                     headers: { "Authorization": `Bearer ${token}` }
                 })
                 if (res.ok) {
-                    setMessages(await res.json())
+                    try {
+                        const data = await res.json()
+                        setMessages(Array.isArray(data) ? data : [])
+                    } catch (e) {
+                        console.error("Gagal parse pesan:", e)
+                        setMessages([])
+                    }
                 }
             }
             fetchMessages()
