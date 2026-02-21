@@ -255,9 +255,19 @@ export default function JobsPage() {
                                     </div>
                                 </div>
                             </CardContent>
-                            <CardFooter>
+                            <CardFooter className="flex gap-3">
                                 <Button
-                                    className="w-full font-semibold shadow-sm z-10 relative"
+                                    variant="outline"
+                                    className="w-1/2 font-semibold shadow-sm z-10 relative bg-background hover:bg-muted text-primary border-primary/20 hover:border-primary/50"
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        router.push(`/jobs/${job.id}`)
+                                    }}
+                                >
+                                    Lihat Detail
+                                </Button>
+                                <Button
+                                    className="w-1/2 font-semibold shadow-sm z-10 relative"
                                     onClick={(e) => {
                                         e.stopPropagation()
                                         setSelectedJob(job)

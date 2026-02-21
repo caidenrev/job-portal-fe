@@ -161,9 +161,12 @@ export default function LandingPage() {
                       </div>
                     </div>
                   </CardContent>
-                  <CardFooter>
-                    <Button asChild className="w-full font-semibold shadow-sm group-hover:shadow-primary/25 transition-all">
-                      <Link href="/jobs">Lihat Detail</Link>
+                  <CardFooter className="flex gap-3">
+                    <Button variant="outline" asChild className="w-1/2 font-semibold shadow-sm group-hover:shadow-primary/25 transition-all text-primary border-primary/20 hover:border-primary/50">
+                      <Link href={`/jobs/${job.id}`}>Lihat Detail</Link>
+                    </Button>
+                    <Button asChild className="w-1/2 font-semibold shadow-sm z-10 relative group-hover:shadow-primary/25 transition-all">
+                      <Link href={`/jobs/${job.id}`}>Lamar Sekarang</Link>
                     </Button>
                   </CardFooter>
                 </Card>
