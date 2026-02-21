@@ -11,9 +11,16 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { FileDown, RefreshCw, Mail, Users } from "lucide-react"
+import { FileDown, RefreshCw, Mail, Users, Eye, Sparkles, Briefcase, BookOpen } from "lucide-react"
 
 interface Candidate {
     id: number
@@ -24,6 +31,11 @@ interface Candidate {
         name: string
         email: string
         phone: string | null
+        bio?: string
+        experience?: string
+        skills?: string
+        profileImageUrl?: string
+        savedCvUrl?: string
     }
     job: {
         title: string
@@ -33,6 +45,8 @@ interface Candidate {
 export default function CandidatesPage() {
     const [candidates, setCandidates] = useState<Candidate[]>([])
     const [loading, setLoading] = useState(true)
+    const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null)
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
 
     const fetchCandidates = async () => {
         setLoading(true)
@@ -163,6 +177,9 @@ export default function CandidatesPage() {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex items-center justify-end gap-2 text-xs">
+                                            <Button title="Lihat Profil" variant="ghost" size="icon" className="hover:text-primary hover:bg-primary/10 h-8 w-8" onClick={() => { setSelectedCandidate(candidate); setIsDialogOpen(true); }}>
+                                                <Eye className="w-4 h-4" />
+                                            </Button>
                                             <Button variant="ghost" size="sm" asChild className="hover:text-primary hover:bg-primary/10">
                                                 <a href={candidate.cvUrl} target="_blank" rel="noopener noreferrer">
                                                     <FileDown className="w-4 h-4 mr-1" /> CV
@@ -188,6 +205,66 @@ export default function CandidatesPage() {
                     </Table>
                 )}
             </div>
+
+            {/* Modal Detail Pelamar */}
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+                            Detail Pelamar
+                        </DialogTitle>
+                        <DialogDescription>
+                            Profil lengkap untuk kandidat posisi {selectedCandidate?.job?.title}.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {selectedCandidate && (
+                        <div className="space-y-6 py-4">
+                            <div className="flex items-start gap-4">
+                                {selectedCandidate.applicant.profileImageUrl ? (
+                                    <div className="w-20 h-20 rounded-full overflow-hidden shrink-0 border-2 border-primary/20 shadow-sm">
+                                        <img src={selectedCandidate.applicant.profileImageUrl} alt="Profile" className="w-full h-full object-cover" />
+                                    </div>
+                                ) : (
+                                    <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border-2 border-primary/20 shadow-sm">
+                                        <Users className="w-10 h-10 text-primary" />
+                                    </div>
+                                )}
+                                <div className="space-y-1 mt-2">
+                                    <h3 className="text-2xl font-extrabold">{selectedCandidate.applicant.name}</h3>
+                                    <div className="text-sm text-muted-foreground grid gap-1">
+                                        <span className="flex items-center gap-2"><Mail className="w-4 h-4" /> {selectedCandidate.applicant.email}</span>
+                                        {selectedCandidate.applicant.phone && <span className="flex items-center gap-2"><Briefcase className="w-4 h-4" /> {selectedCandidate.applicant.phone}</span>}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <h4 className="font-semibold text-lg border-b pb-1 mb-2 flex items-center gap-2"><BookOpen className="w-4 h-4 text-primary" /> Tentang / Ringkasan</h4>
+                                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                                        {selectedCandidate.applicant.bio || "Pelamar ini belum menuliskan ringkasan diri."}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <h4 className="font-semibold text-lg border-b pb-1 mb-2 flex items-center gap-2"><Briefcase className="w-4 h-4 text-primary" /> Pengalaman Pengguna</h4>
+                                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                                        {selectedCandidate.applicant.experience || "Pengalaman belum diisi."}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <h4 className="font-semibold text-lg border-b pb-1 mb-2 flex items-center gap-2"><Sparkles className="w-4 h-4 text-primary" /> Kemampuan (Skills)</h4>
+                                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                                        {selectedCandidate.applicant.skills || "Belum ada kemampuan spesifik yang dilampirkan."}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }
