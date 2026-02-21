@@ -54,7 +54,7 @@ export default function ProfilePage() {
 
         const fetchProfile = async () => {
             try {
-                const res = await fetch("http://localhost:8000/api/users/profile", {
+                const res = await fetch(`${API_URL}/api/users/profile`, {
                     headers: {
                         "Authorization": `Bearer ${token}`
                     }
@@ -115,7 +115,7 @@ export default function ProfilePage() {
                 formData.append("newPassword", newPassword)
             }
 
-            const res = await fetch("http://localhost:8000/api/users/profile", {
+            const res = await fetch(`${API_URL}/api/users/profile`, {
                 method: "PUT",
                 headers: {
                     // Do NOT set Content-Type header when sending FormData! Browser sets multipart/form-data automatically
