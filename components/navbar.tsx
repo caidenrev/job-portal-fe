@@ -230,6 +230,9 @@ export default function Navbar() {
                                             <DropdownMenuItem onClick={() => router.push('/profile')} className="cursor-pointer">
                                                 <User className="mr-2 h-4 w-4" /> Edit Profil
                                             </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => router.push('/applicant-messages')} className="cursor-pointer">
+                                                <MessageCircle className="mr-2 h-4 w-4" /> Kotak Pesan
+                                            </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => router.push('/tracker')} className="cursor-pointer">
                                                 <Search className="mr-2 h-4 w-4" /> Status Lamaran
                                             </DropdownMenuItem>
@@ -324,6 +327,9 @@ export default function Navbar() {
                                                         <>
                                                             <Link href="/profile" className="flex items-center gap-3 p-3 rounded-lg hover:bg-primary/10 transition-colors font-medium text-sm">
                                                                 <User className="w-4 h-4 text-primary" /> Edit Profil
+                                                            </Link>
+                                                            <Link href="/applicant-messages" className="flex items-center gap-3 p-3 rounded-lg hover:bg-primary/10 transition-colors font-medium text-sm">
+                                                                <MessageCircle className="w-4 h-4 text-primary" /> Kotak Pesan
                                                             </Link>
                                                             <Link href="/tracker" className="flex items-center gap-3 p-3 rounded-lg hover:bg-primary/10 transition-colors font-medium text-sm">
                                                                 <Search className="w-4 h-4 text-primary" /> Status Lamaran

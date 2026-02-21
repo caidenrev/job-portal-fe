@@ -134,7 +134,7 @@ export default function CandidatesPage() {
             })
 
             if (res.ok) {
-                router.push("/messages")
+                router.push("/hr-messages")
             } else {
                 alert("Gagal menginisialisasi percakapan")
             }
