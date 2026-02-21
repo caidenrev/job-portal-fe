@@ -126,7 +126,7 @@ export default function HRLayout({
 
                                     <SidebarMenuItem>
                                         <SidebarMenuButton asChild tooltip="Profil & Perusahaan" className="hover:bg-primary/10 hover:text-primary transition-colors">
-                                            <Link href="/profile">
+                                            <Link href="/hr-profile">
                                                 <Settings className="w-5 h-5" />
                                                 <span className="font-medium text-base">Profil & Perusahaan</span>
                                             </Link>
