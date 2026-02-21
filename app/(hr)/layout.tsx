@@ -17,7 +17,7 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Briefcase, LayoutDashboard, Users, LogOut } from "lucide-react"
+import { Briefcase, LayoutDashboard, Users, LogOut, Settings } from "lucide-react"
 
 export default function HRLayout({
     children,
@@ -120,6 +120,15 @@ export default function HRLayout({
                                             <Link href="/candidates">
                                                 <Users className="w-5 h-5" />
                                                 <span className="font-medium text-base">Kelola Kandidat</span>
+                                            </Link>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+
+                                    <SidebarMenuItem>
+                                        <SidebarMenuButton asChild tooltip="Profil & Perusahaan" className="hover:bg-primary/10 hover:text-primary transition-colors">
+                                            <Link href="/profile">
+                                                <Settings className="w-5 h-5" />
+                                                <span className="font-medium text-base">Profil & Perusahaan</span>
                                             </Link>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
