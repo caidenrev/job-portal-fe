@@ -97,8 +97,9 @@ export default function HRProfilePage() {
 
             setMessage({ type: "success", text: "Profil berhasil diperbarui!" })
 
-            // Trigger a potential reload or state update in the Layout if needed
-            // Custom event dispatcher can be added here if layout needs instant refresh
+            // Trigger a potential reload or state update in the Layout
+            window.dispatchEvent(new Event('profileUpdated'))
+
         } catch (err: any) {
             setMessage({ type: "error", text: err.message })
         } finally {

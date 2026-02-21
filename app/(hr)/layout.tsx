@@ -67,6 +67,12 @@ export default function HRLayout({
         }
 
         fetchHRProfile()
+
+        // Listen for profile updates from the hr-profile page
+        window.addEventListener('profileUpdated', fetchHRProfile)
+        return () => {
+            window.removeEventListener('profileUpdated', fetchHRProfile)
+        }
     }, [])
 
     const handleLogout = () => {
