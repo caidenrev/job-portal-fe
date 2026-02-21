@@ -72,7 +72,11 @@ export default function ApplicantMessagesPage() {
         fetchInbox()
 
         // Init Socket
-        const newSocket = io(API_URL)
+        const socketUrl = API_URL || window.location.origin
+        const newSocket = io(socketUrl, {
+            path: '/socket.io',
+            transports: ['websocket', 'polling']
+        })
         setSocket(newSocket)
 
         newSocket.on("inbox_update", () => {
