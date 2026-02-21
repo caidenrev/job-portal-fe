@@ -219,30 +219,32 @@ export default function TrackerPage() {
                                                         <Icon className={`w-4 h-4 md:w-6 md:h-6 ${isCurrentlyFocused ? 'animate-pulse' : ''}`} />
                                                     </div>
 
-                                                    {/* Typography Title & Desc */}
+                                                    {/* Typography Title */}
                                                     <div className="absolute top-12 md:top-16 w-20 md:w-48 text-center flex flex-col items-center">
-                                                        <span className={`text-[10px] md:text-sm tracking-tight font-bold mb-0.5 md:mb-1 transition-colors ${isActive ? (isRejected ? 'text-red-600' : `text-${step.twColor}-600 dark:text-${step.twColor}-400`) : 'text-muted-foreground'}`}>
+                                                        <span className={`text-[10px] md:text-sm tracking-tight font-bold mb-0.5 md:mb-1 transition-colors leading-tight ${isActive ? (isRejected ? 'text-red-600' : `text-${step.twColor}-600 dark:text-${step.twColor}-400`) : 'text-muted-foreground'}`}>
                                                             {isRejected && index === STEPS.length - 1 ? "Ditolak / Gagal" : step.label}
                                                         </span>
-
-                                                        {/* Description appears only on active focused steps to avoid clutter, or on all past steps? We show on focused step only for elegance */}
-                                                        {isCurrentlyFocused && (
-                                                            <p className="hidden md:block text-[11px] md:text-xs text-muted-foreground font-medium leading-relaxed animate-in fade-in slide-in-from-top-2 duration-500">
-                                                                {step.desc}
-                                                            </p>
-                                                        )}
-                                                        {isRejected && index === STEPS.length - 1 && (
-                                                            <p className="hidden md:block text-[11px] md:text-xs text-red-500/80 font-medium leading-relaxed animate-in fade-in slide-in-from-top-2 duration-500">
-                                                                Maaf, profilmu belum memenuhi kualifikasi saat ini.
-                                                            </p>
-                                                        )}
                                                     </div>
                                                 </div>
                                             )
                                         })}
                                     </div>
-                                    {/* Spacer Extra for Absolute Descriptions */}
-                                    <div className="h-10 md:h-20"></div>
+
+                                    {/* Spacer Extra for Absolute Titles */}
+                                    <div className="h-10 md:h-14"></div>
+
+                                    {/* Centered Description Block Below Stepper */}
+                                    <div className="mt-8 px-4 text-center mx-auto max-w-lg animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
+                                        <div className={`inline-block px-4 py-2.5 rounded-2xl border bg-background/50 backdrop-blur-sm shadow-sm
+                                            ${isRejected ? 'border-red-200 bg-red-50/50' : (activeStepData ? `border-${activeStepData.twColor}-200 bg-${activeStepData.twColor}-50/50` : 'border-muted')}
+                                        `}>
+                                            <p className={`text-sm md:text-base font-medium leading-relaxed
+                                                ${isRejected ? 'text-red-700' : (activeStepData ? `text-${activeStepData.twColor}-700` : 'text-muted-foreground')}
+                                            `}>
+                                                {isRejected ? "Maaf, profilmu belum memenuhi kualifikasi saat ini. Jangan menyerah dan coba posisi lain!" : activeStepData?.desc}
+                                            </p>
+                                        </div>
+                                    </div>
 
                                 </CardContent>
                             </Card>
