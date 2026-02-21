@@ -6,7 +6,7 @@ import { io, Socket } from "socket.io-client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Send, MessageCircle, User, Briefcase } from "lucide-react"
+import { Send, MessageCircle, User, Briefcase, ArrowLeft } from "lucide-react"
 
 interface Message {
     id: number
@@ -147,7 +147,7 @@ export default function HRMessagesPage() {
         <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 h-[80vh]">
 
             {/* Sidebar Inbox */}
-            <Card className="md:col-span-1 flex flex-col h-full bg-background/50 backdrop-blur-sm">
+            <Card className={`md:col-span-1 flex-col h-full bg-background/50 backdrop-blur-sm ${activeConversation ? 'hidden md:flex' : 'flex'}`}>
                 <CardHeader className="border-b pb-4">
                     <CardTitle className="text-xl flex items-center gap-2">
                         <MessageCircle className="w-5 h-5 text-primary" /> Pesan Kandidat
@@ -191,22 +191,25 @@ export default function HRMessagesPage() {
             </Card>
 
             {/* Chat Area */}
-            <Card className="md:col-span-2 flex flex-col h-full bg-background/50 backdrop-blur-sm">
+            <Card className={`md:col-span-2 flex-col h-full bg-background/50 backdrop-blur-sm ${activeConversation ? 'flex' : 'hidden md:flex'}`}>
                 {activeConversation ? (
                     <>
-                        <CardHeader className="border-b py-4 bg-muted/20">
+                        <CardHeader className="border-b py-4 bg-muted/20 px-4 md:px-6">
                             <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full border border-border flex items-center justify-center overflow-hidden bg-background">
+                                <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
+                                    <Button variant="ghost" size="icon" className="md:hidden shrink-0 -ml-2 h-8 w-8" onClick={() => setActiveConversation(null)}>
+                                        <ArrowLeft className="w-5 h-5 text-muted-foreground" />
+                                    </Button>
+                                    <div className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-full border border-border flex items-center justify-center overflow-hidden bg-background">
                                         {activeConversation.applicant.profileImageUrl ? (
                                             <img src={activeConversation.applicant.profileImageUrl} alt="Pelamar" className="w-full h-full object-cover" />
                                         ) : (
                                             <User className="w-6 h-6 text-muted-foreground" />
                                         )}
                                     </div>
-                                    <div>
-                                        <CardTitle className="text-lg">{activeConversation.applicant.name}</CardTitle>
-                                        <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                                    <div className="overflow-hidden">
+                                        <CardTitle className="text-base md:text-lg truncate">{activeConversation.applicant.name}</CardTitle>
+                                        <p className="text-xs md:text-sm text-muted-foreground flex items-center gap-1.5 truncate">
                                             Melamar: {activeConversation.job?.title || "Lowongan"}
                                         </p>
                                     </div>

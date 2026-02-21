@@ -6,7 +6,7 @@ import { io, Socket } from "socket.io-client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Send, MessageCircle, User, Briefcase } from "lucide-react"
+import { Send, MessageCircle, User, Briefcase, ArrowLeft } from "lucide-react"
 
 interface Message {
     id: number
@@ -147,7 +147,7 @@ export default function ApplicantMessagesPage() {
         <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 h-[80vh]">
 
             {/* Sidebar Inbox */}
-            <Card className="md:col-span-1 flex flex-col h-full bg-background/50 backdrop-blur-sm">
+            <Card className={`md:col-span-1 flex-col h-full bg-background/50 backdrop-blur-sm ${activeConversation ? 'hidden md:flex' : 'flex'}`}>
                 <CardHeader className="border-b pb-4">
                     <CardTitle className="text-xl flex items-center gap-2">
                         <MessageCircle className="w-5 h-5 text-primary" /> Kotak Masuk
@@ -175,7 +175,7 @@ export default function ApplicantMessagesPage() {
                                         )}
                                     </div>
                                     <div className="overflow-hidden">
-                                        <h4 className="font-semibold truncate text-sm">{conv.hr.name} <span className="text-xs text-muted-foreground font-normal">({conv.job?.company?.name || "Perusahaan"})</span></h4>
+                                        <h4 className="font-semibold truncate text-sm">{conv.job?.company?.name || "Perusahaan"} <span className="text-xs text-muted-foreground font-normal">(HR: {conv.hr.name})</span></h4>
                                         <p className="text-xs text-muted-foreground truncate italic flex items-center gap-1">
                                             <Briefcase className="w-3 h-3" /> {conv.job?.title || "Lowongan"}
                                         </p>
@@ -191,12 +191,15 @@ export default function ApplicantMessagesPage() {
             </Card>
 
             {/* Chat Area */}
-            <Card className="md:col-span-2 flex flex-col h-full bg-background/50 backdrop-blur-sm">
+            <Card className={`md:col-span-2 flex-col h-full bg-background/50 backdrop-blur-sm ${activeConversation ? 'flex' : 'hidden md:flex'}`}>
                 {activeConversation ? (
                     <>
-                        <CardHeader className="border-b py-4 bg-muted/20">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full border border-border flex items-center justify-center overflow-hidden bg-background">
+                        <CardHeader className="border-b py-4 bg-muted/20 px-4 md:px-6">
+                            <div className="flex items-center gap-3 md:gap-4">
+                                <Button variant="ghost" size="icon" className="md:hidden shrink-0 -ml-2 h-8 w-8" onClick={() => setActiveConversation(null)}>
+                                    <ArrowLeft className="w-5 h-5 text-muted-foreground" />
+                                </Button>
+                                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-border flex items-center justify-center overflow-hidden bg-background shrink-0">
                                     {activeConversation.hr.profileImageUrl ? (
                                         <img src={activeConversation.hr.profileImageUrl} alt="HR" className="w-full h-full object-cover" />
                                     ) : (
@@ -204,9 +207,9 @@ export default function ApplicantMessagesPage() {
                                     )}
                                 </div>
                                 <div>
-                                    <CardTitle className="text-lg">{activeConversation.hr.name}</CardTitle>
-                                    <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                                        <Briefcase className="w-3.5 h-3.5" /> Pelamar posisi: {activeConversation.job?.title || "Lowongan"} di {activeConversation.job?.company?.name || "Perusahaan"}
+                                    <CardTitle className="text-base md:text-lg truncate">{activeConversation.job?.company?.name || "Perusahaan"}</CardTitle>
+                                    <p className="text-xs md:text-sm text-muted-foreground flex items-center gap-1.5 truncate">
+                                        <Briefcase className="w-3.5 h-3.5 shrink-0" /> <span className="truncate">Posisi: {activeConversation.job?.title || "Lowongan"} (HR: {activeConversation.hr.name})</span>
                                     </p>
                                 </div>
                             </div>
